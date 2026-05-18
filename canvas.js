@@ -1,6 +1,7 @@
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
 
+//==== APPLICATION STAGE ====
 let ball1 = {
   x: 100,
   y: 100,
@@ -40,14 +41,19 @@ for (let i = 0; i < 80; i++) {
 
 function drawStars() {
 
+  //==== RASTERIZATION STAGE ====
   ctx.fillStyle = "white";
 
   stars.forEach((star) => {
 
+    //==== GEOMETRY STAGE ====
     ctx.beginPath();
     ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+
+    //==== RASTERIZATION STAGE ====
     ctx.fill();
 
+    //==== APPLICATION STAGE ====
     star.y += star.speed;
 
     if (star.y > canvas.height) {
@@ -58,13 +64,16 @@ function drawStars() {
 }
 
 function drawBall(ball) {
-
+  
+  //==== RASTERIZATION STAGE ====
   ctx.shadowBlur = 20;
   ctx.shadowColor = ball.color;
 
+  //==== GEOMETRY STAGE ====
   ctx.beginPath();
   ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
 
+  //==== RASTERIZATION STAGE ====
   ctx.fillStyle = ball.color;
   ctx.fill();
 
@@ -75,10 +84,12 @@ function drawBall(ball) {
 
 function animate() {
 
+  //==== RASTERIZATION STAGE ====
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   drawStars();
 
+  //==== APPLICATION STAGE ====
   ball1.x += ball1.dx;
   ball1.y += ball1.dy;
 
@@ -105,6 +116,7 @@ function animate() {
   drawBall(ball1);
   drawBall(ball2);
 
+  //==== RASTERIZATION STAGE ====
   let gradient = ctx.createLinearGradient(
     rect.x,
     rect.y,
@@ -116,9 +128,12 @@ function animate() {
   gradient.addColorStop(1, "#8000ff");
 
   ctx.fillStyle = gradient;
-
+  
+  //==== GEOMETRY STAGE ====
   ctx.beginPath();
   ctx.roundRect(rect.x, rect.y, rect.width, rect.height, 20);
+
+  //==== RASTERIZATION STAGE ====
   ctx.fill();
 
   ctx.font = "26px Arial";
@@ -139,6 +154,7 @@ function animate() {
     80
   );
 
+  //==== APPLICATION STAGE ====
   requestAnimationFrame(animate);
 }
 
