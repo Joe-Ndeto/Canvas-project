@@ -1,51 +1,143 @@
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
 
-let ballX = 100;
-let ballY = 100;
-let ballRadius = 40;
-let ballSpeedX = 4;
-let ballSpeedY = 3;
+let ball1 = {
+  x: 100,
+  y: 100,
+  radius: 35,
+  dx: 4,
+  dy: 3,
+  color: "cyan"
+};
 
-let rectX = 300;
-let rectY = 320;
-let rectWidth = 150;
-let rectHeight = 80;
-let rectSpeed = 2;
+let ball2 = {
+  x: 700,
+  y: 200,
+  radius: 30,
+  dx: -3,
+  dy: 4,
+  color: "orange"
+};
+
+let rect = {
+  x: 300,
+  y: 350,
+  width: 180,
+  height: 80,
+  speed: 3
+};
+
+let stars = [];
+
+for (let i = 0; i < 80; i++) {
+  stars.push({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    radius: Math.random() * 2,
+    speed: Math.random() * 1
+  });
+}
+
+function drawStars() {
+
+  ctx.fillStyle = "white";
+
+  stars.forEach((star) => {
+
+    ctx.beginPath();
+    ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+    ctx.fill();
+
+    star.y += star.speed;
+
+    if (star.y > canvas.height) {
+      star.y = 0;
+      star.x = Math.random() * canvas.width;
+    }
+  });
+}
+
+function drawBall(ball) {
+
+  ctx.shadowBlur = 20;
+  ctx.shadowColor = ball.color;
+
+  ctx.beginPath();
+  ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+
+  ctx.fillStyle = ball.color;
+  ctx.fill();
+
+  ctx.closePath();
+
+  ctx.shadowBlur = 0;
+}
 
 function animate() {
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  ballX += ballSpeedX;
-  ballY += ballSpeedY;
+  drawStars();
 
-  rectX += rectSpeed;
+  ball1.x += ball1.dx;
+  ball1.y += ball1.dy;
+
+  ball2.x += ball2.dx;
+  ball2.y += ball2.dy;
+
+  rect.x += rect.speed;
+
+  [ball1, ball2].forEach(ball => {
+
+    if (ball.x + ball.radius > canvas.width || ball.x - ball.radius < 0) {
+      ball.dx *= -1;
+    }
+
+    if (ball.y + ball.radius > canvas.height || ball.y - ball.radius < 0) {
+      ball.dy *= -1;
+    }
+  });
+
+  if (rect.x + rect.width > canvas.width || rect.x < 0) {
+    rect.speed *= -1;
+  }
   
-  if (ballX + ballRadius > canvas.width || ballX - ballRadius < 0) {
-    ballSpeedX = -ballSpeedX;
-  }
+  drawBall(ball1);
+  drawBall(ball2);
 
-  if (ballY + ballRadius > canvas.height || ballY - ballRadius < 0) {
-    ballSpeedY = -ballSpeedY;
-  }
+  let gradient = ctx.createLinearGradient(
+    rect.x,
+    rect.y,
+    rect.x + rect.width,
+    rect.y + rect.height
+  );
 
-  if (rectX + rectWidth > canvas.width || rectX < 0) {
-    rectSpeed = -rectSpeed;
-  }
+  gradient.addColorStop(0, "#ff4d4d");
+  gradient.addColorStop(1, "#8000ff");
+
+  ctx.fillStyle = gradient;
 
   ctx.beginPath();
-  ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2);
-  ctx.fillStyle = "blue";
+  ctx.roundRect(rect.x, rect.y, rect.width, rect.height, 20);
   ctx.fill();
-  ctx.closePath();
 
-  ctx.fillStyle = "red";
-  ctx.fillRect(rectX, rectY, rectWidth, rectHeight);
+  ctx.font = "26px Arial";
+  ctx.fillStyle = "white";
 
-  ctx.font = "22px Arial";
-  ctx.fillStyle = "black";
-  ctx.fillText("HTML5 Canvas Graphics Pipeline Demo", 220, 40);
+  ctx.fillText(
+    "HTML5 Canvas Multimedia Animation",
+    220,
+    50
+  );
+
+  ctx.font = "16px Arial";
+  ctx.fillStyle = "#bbbbbb";
+
+  ctx.fillText(
+    "Application • Geometry • Rasterization",
+    300,
+    80
+  );
 
   requestAnimationFrame(animate);
 }
